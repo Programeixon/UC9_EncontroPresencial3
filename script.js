@@ -89,7 +89,7 @@ function validarCPF(){
     var cpf = document.getElementById('cpf').value;
 
     if(typeof cpf !== "string") return false;
-    cpf = cpf.replace(/[\s.-]*/igm,'');
+    cpf = cpf.replace(/[\s.-]*/igm, '');
     if(!cpf ||
         cpf.length !=11 ||
         cpf == "00000000000" ||
@@ -105,5 +105,63 @@ function validarCPF(){
     ){
         return false;
     }
+    var soma = 0; 
+    var resto;
+    for(var i = 1; i <= 9; i++)
+        soma = soma + parseInt(cpf.substring(i-1, i)) * (11-i);
+    resto = (soma * 10) % 11;
+    if((resto == 10) || (resto == 11)) resto = 0;
+    if(resto != parseInt(cpf.substring(9,10))) return false;
+    soma = 0;
+    
+    for(var i = 1; i <= 10; i++) 
+        soma = soma + parseInt(cpf.substring(i-1, i)) * (12-i);
+    resto = (soma * 10) % 11;
+    if((resto == 10) || (resto == 11)) resto = 0;
+    if(resto != parseInt(cpf.substring(10,11))) return false;
+    return true;
 }
+function confereCPF(){
+    const valido = validarCPF();
+    if(!valido){
+        alert("CPF Inválido!");
+        document.form.cpf.focus();
+    }
+    return valido;
+}
+
+function gerar_json(form){
+    var nome = form.nome.value;
+    var cpf = form.cpf.value;
+    var telefone_res = form.telefone_res.value;
+    var telefone_cel = form.telefone_cel.value;
+    var cep = form.cep.value;
+    var endereco = form.endereco.value;
+    var numero = form.numero.value;
+    var bairro = form.bairro.value;
+    var cidade = form.cidade.value;
+    var estado = form.estado.value;
+    var ibge = form.ibge.value;
+
+    var dados = {nome, cpf, telefone_res, telefone_cel, cep, endereco, numero, bairro, cidade, estado, ibge}
+
+    var formularioValido = validarNome() && confereCPF();
+
+    if(formularioValido){
+        document.write("<h2>Retorno em Json</h2>");
+        document.write(JSON.stringify(dados, null, '<br>'));
+    }else{
+        alert("Preencha todos os campos!");
+        document.form.focus();
+    }
+}
+    
+//mascaras
+$(function(){
+    $(".cpf_mask").mask('999.999.999-99');
+    $(".tel_res_mask").mask('(99)9999-9999');
+    $(".tel_cel_mask").mask('(99)99999-9999');
+    $(".cep_mask").mask('99-999-999');
+    
+});
     
